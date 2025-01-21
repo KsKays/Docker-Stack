@@ -44,3 +44,41 @@ services:
     restart: always
     networks:
       - web_network
+  # Redis (caching)
+  redis:
+    image: redis:6.2.1-buster
+    container_name: laravel11_redis
+    volumes:
+      - ./redis/data:/data
+    restart: always
+    networks:
+      - web_network
+
+# phpMyAdmin (MySQL management)
+  phpmyadmin:
+    image: phpmyadmin:5.1.0-apache
+    depends_on:
+      - db
+    container_name: laravel11_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: admin
+      PMA_PASSWORD: 1234
+    ports:
+      - 8200:80
+    restart: always
+    tty: true
+    networks:
+      - web_network
+
+      # MailHog (local mail testing)
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: laravel11_mailhog
+    ports:
+      - 8025:8025
+    restart: always
+    tty: true
+    networks:
+      - web_network
